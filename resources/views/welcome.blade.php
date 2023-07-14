@@ -304,7 +304,7 @@
   <table class="table table-borderless" style="justify-content: center; height: 30%; width: 75%; margin-left:20%; background-color: white; color: black; font-size:13px;">
     <thead class="thead-light">
       <tr>
-        <th scope="col" style="text-align: center;">CATEGORY</th>
+        <th scope="col" style="text-align: center;">CATEGORY 0</th>
       </tr>
     </thead>
     <tbody>
