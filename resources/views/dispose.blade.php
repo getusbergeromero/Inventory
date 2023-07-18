@@ -42,8 +42,10 @@
         }
 
         body {
-            background: linear-gradient(to top right, #205D7A, whitesmoke);
-
+            background: url("{{asset('assets/rr.png')}}");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
         }
 
 
@@ -113,7 +115,7 @@
 
 
         .rounded-image {
-            width: 90px;
+            width: 120px;
             border-radius: 50px;
             position: fixed;
             top: 87%;
@@ -127,11 +129,12 @@
             animation: grow 1.5s linear forwards;
         }
 
+
         .text-overlay {
             display: none;
             position: fixed;
-            top: 80%;
-            left: 75%;
+            top: 83%;
+            left: 79%;
             transform: translate(-40%, -40%) scale(0.3);
             font-size: 45px;
             background-color: none;
@@ -198,7 +201,7 @@
 </head>
 
 <body>
-    <div class="sidebar" style="position: fixed; top: 115; left: 0; width: 12%; height: 100vh; background-color:#343a40; padding: 10px; font-size: 10px; z-index: 1;  border-right: 2px solid #343a40; /* Set the right border */
+    <div class="sidebar" style="position: fixed; top:145; left: 0; width: 12%; height: 100vh; background-color:#343a40; padding: 10px; font-size: 10px; z-index: 1;  border-right: 2px solid #343a40; /* Set the right border */
   border-radius: 0 50px 0 0;">
         <ul><br><br>
             <li><a href="{{url('deploy')}}"><i class="fas fa-cogs fa-3x"></i>
@@ -210,7 +213,7 @@
             <li><a href="{{url('dispose')}}"><i class="fas fa-trash-alt fa-3x"></i>
                     <p style="color:aliceblue; font-size:12px; "> Dispose Inventory</p>
                 </a></li>
-            <li><a href="#"><i class="fas fa-exchange-alt fa-3x"></i>
+            <li><a href="{{url('reserve')}}"><i class="fas fa-exchange-alt fa-3x"></i>
                     <p style="color:aliceblue; font-size:12px; ">Reserve Inventory</p>
                 </a></li>
             <h3 style=" color: #ffffff;
@@ -219,11 +222,20 @@
                     <h3 style="color:white; font-size:10px; margin-left:-90;">*CATEGORY</h3>
                 </a></li>
             <li><a href="{{url('incoming')}}"><i class=""></i>
-                    <h3 style="color:white; font-size:10px;margin-left:-90;">*INCOMING</h3>
+                    <h3 style="color:white; font-size:10px;margin-left:-90;">*DEVICE</h3>
                 </a></li>
             <li><a href="{{url('personnel')}}"><i class=""></i>
                     <h3 style="color:white; font-size:10px;margin-left:-90;">*PERSONNEL</h3>
                 </a></li>
+            <li>
+                <button class="btn btn-danger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    {{ __('Log Out') }}
+                </button>
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+            </li>
         </ul>
     </div><br><br>
     <script>
@@ -237,13 +249,13 @@
     <header style="position: fixed; top: 0; left: 0; width: 100%; height:13%;  background:#343a40; z-index: 2;">
         <nav>
             <h1 style="display: flex; align-items: center;">
-                <img src="{{asset('assets/zs.png')}}" class="rounded float-left" alt="Responsive image" style=" margin-left: -2%; width: 15%; border-radius: 50px;">
+                <img src="{{asset('assets/it.png')}}" class="rounded float-left" alt="Responsive image" style=" margin-left: -2%; width: 15%; border-radius: 50px;">
                 <!-- Button trigger modal -->
                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
             </h1>
         </nav>
     </header><br>
-    <!-- Modal -->
+    <!-- Modal --> <br>
     <div class="modal fade bd-example-modal-lg" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content" style="border-radius:20px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -258,21 +270,21 @@
                         <div class="btn-group">
                             <div class="dropdown-select">
                                 <select name="incoming_id">
-                                    <option value="">Select a description</option>
-                                    @foreach($dispose as $item)
-                                    <option value="{{ $item->id }}">{{ $item->category }}</option>
-                                    @endforeach
-                                </select>
-                                <select name="personnel_id">
-                                    <option value="">Select serial no.</option>
-                                    @foreach($dispose as $item)
-                                    <option value="{{ $item->id }}">{{ $item-> category}}</option>
+                                    <option value="">Select Category</option>
+                                    @foreach($incomings as $item)
+                                    <option value="{{$item->id}}">{{ $item->category.' - '. $item->description}}</option>
                                     @endforeach
                                 </select>
                             </div>
+                            <br><br>
                         </div>
-                        <p></p>
-                        <input type="text" name="acknowledgement" placeholder="Enter Acknoeledgement No.*" class="muted-text-input">
+                        <select name="inventory_tag_no">
+                            <option value="">Select Inventory Tag No</option>
+                            @forelse($deploy as $item)
+                            <option value="{{ $item->id }}">{{ $item->inventory_tag_no}}</option>
+                            @empty
+                            @endforelse
+                        </select><br><br>
                 </div>
                 <div class="modal-footer">
                     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -287,13 +299,13 @@
     </div>
 
     <div style="display: flex; justify-content: flex-end; margin-right: 4%;">
-        <button type="button" class="floating-button" style="padding: 5px; width: 7%; border-color:white; background-color: #205D7A;
+        <button type="button" class="floating-button" style="padding: 5px; width: 8%; border-color:white; background-color: #205D7A;
    color:white; border-radius:10px;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
             <i class="fas fa-plus"></i> Add New
         </button>
     </div>
     </table>
-    <table class="table table-borderless" style="justify-content: center; height: 30%;  width: 79%; margin-left:18%; background-color: white; color: black; font-size:13px;">
+    <table class="table table-borderless" style="justify-content: center; height: 10%;  width: 79%; margin-left:18%; background-color: white; color: black; font-size:13px;">
         <thead class="thead-light">
             <tr>
                 <th scope="col" style="text-align: center;">ITEM CATEGORY</th>
@@ -305,10 +317,9 @@
         <tbody>
             @foreach ($dispose as $incoming_item)
             <tr>
-                <!-- {{dd($incoming_item->getCategoryName())}} -->
-                <td scope="row" style="text-align: center;">{{$incoming_item-> item_category}}</td>
-                <td scope="row" style="text-align: center;">{{$incoming_item-> description}}</td>
-                <td scope="row" style="text-align: center;">{{$incoming_item-> serial_no}}</td>
+                <td scope="row" style="text-align: center;">{{$incoming_item->category}}</td>
+                <td scope="row" style="text-align: center;">{{$incoming_item->description}}</td>
+                <td scope="row" style="text-align: center;">{{$incoming_item->serial_no}}</td>
                 <td scope="row" style="text-align: center;">{{$incoming_item->inventory_tag_no}}</td>
 
             </tr>

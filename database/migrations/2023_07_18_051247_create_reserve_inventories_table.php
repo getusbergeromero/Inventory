@@ -13,13 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('return_inventories', function (Blueprint $table) {
+        Schema::create('reserve_inventories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('incoming_id')->constrained('incomings');
-            $table->foreignId('deploy_id')->constrained('dep_inventories');
-            $table->foreignId('personnel_id')->constrained('personnels');
-            $table->string('status');
-            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('return_inventories');
+        Schema::dropIfExists('reserve_inventories');
     }
 };

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('dep_inventories', function (Blueprint $table) {
             $table->id();
+            $table->string('inventory_tag_no');
             $table->string('acknowledgement_no');
             $table->foreignId('incoming_id')->constrained('incomings');
             $table->foreignId('personnel_id')->constrained('personnels');

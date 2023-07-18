@@ -7,6 +7,7 @@ use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\DepInventoryController;
 use App\Http\Controllers\ReturnInventoryController;
 use App\Http\Controllers\DisposenInventoryController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,10 +20,11 @@ use App\Http\Controllers\DisposenInventoryController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
+
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
 // Route::get('/incoming', function () {
 //     return view('incoming');
@@ -48,3 +50,10 @@ Route::post('/return', [ReturnInventoryController::class, 'store'])->name('retur
 
 Route::get('/dispose', [DisposenInventoryController::class, 'index'])->name('dispose');
 Route::post('/dispose', [DisposenInventoryController::class, 'store'])->name('dispose');
+
+Route::get('/reserve', [ReserveInventoryController::class, 'index'])->name('reserve');
+Route::post('/reserve', [ReserveInventoryController::class, 'store'])->name('reserve');
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

@@ -7,6 +7,7 @@ use App\Models\incoming;
 use App\Models\personnels;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Category;
 
 class DepInventoryController extends Controller
 {
@@ -20,7 +21,8 @@ class DepInventoryController extends Controller
 
         $deploy = depInventory::get();
 
-        $incomings = incoming::get();
+        $incomings = Category::leftJoin('incomings', 'categories.id', '=', 'incomings.category_id')
+            ->get();
         $personnels = personnels::get();
         return view('deploy')->with(['deploy' => $deploy, 'incomings' => $incomings, 'personnels' => $personnels]);
     }
@@ -46,12 +48,14 @@ class DepInventoryController extends Controller
         $validator = validator::make(
             $request->all(),
             [
+                'inventory_tag_no' => 'required',
                 'personnel_id' => 'required',
-                'incoming_id' => 'required',
+                'incoming_id' => 'required'
             ]
         );
         $deploy = new depInventory;
         $deploy->acknowledgement_no = uniqid();
+        $deploy->inventory_tag_no = $request->inventory_tag_no;
         $deploy->personnel_id = $request->personnel_id;
         $deploy->incoming_id = $request->incoming_id;
         $deploy->save();

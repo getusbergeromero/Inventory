@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\DisposenInventory;
+use App\Models\depInventory;
+use App\Models\incoming;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,8 +18,30 @@ class DisposenInventoryController extends Controller
      */
     public function index()
     {
-        $dispose = DisposenInventory::get();
-        return view('dispose')->with(['dispose' => $dispose]);
+         $dispose = DisposenInventory::leftJoin(
+            'incomings',
+            'disposen_inventories.incoming_id',
+            '=',
+            'incomings.id'
+        )
+            ->leftJoin(
+                'dep_inventories',
+                'disposen_inventories.inventory_tag_no',
+                '=',
+                'dep_inventories.id'
+            )->leftJoin(
+                'categories',
+                'incomings.category_id',
+                '=',
+                'categories.id'
+            )
+            ->get();
+        $deploy = depInventory::get();
+
+        $incomings = Category::leftJoin('incomings', 'categories.id', '=', 'incomings.category_id')
+            ->get();
+        $Category = Category::get();
+        return view('dispose')->with(['dispose' => $dispose, 'incomings' => $incomings, 'deploy' => $deploy, 'Category' => $Category]);
     }
 
     /**
@@ -40,18 +65,18 @@ class DisposenInventoryController extends Controller
         $validator = validator::make(
             $request->all(),
             [
-                'item_category' => 'required',
-                'description' => 'required',
-                'serial_no' => 'required',
+
+                'incoming_id' => 'required',
                 'inventory_tag_no' => 'required'
             ]
         );
         $dispose = new DisposenInventory;
-        $dispose->item_category = $request->item_category;
-        $dispose->description = $request->description;
-        $dispose->serial_no = $request->serial_no;
+
+        $dispose->incoming_id = $request->incoming_id;
         $dispose->inventory_tag_no = $request->inventory_tag_no;
         $dispose->save();
+
+        return redirect('/dispose');
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Models\depInventory;
 use App\Models\ReturnInventory;
 use App\Models\incoming;
 use App\Models\personnels;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -22,11 +23,14 @@ class ReturnInventoryController extends Controller
             ->join('personnels', 'personnels.id', '=', 'return_inventories.personnel_id')
             ->join('dep_inventories', 'dep_inventories.id', '=', 'return_inventories.deploy_id')
             ->join('categories', 'categories.id',  '=', 'incomings.category_id')
+
             ->select('*')
             ->get();
 
 
-        $incomings = incoming::get();
+
+        $incomings = Category::leftJoin('incomings', 'categories.id', '=', 'incomings.category_id')
+            ->get();
         $personnels = personnels::get();
         $deploy = depInventory::get();
         return view('return')->with(['return' => $return, 'incomings' => $incomings, 'personnels' => $personnels, 'deploy' => $deploy]);
@@ -61,7 +65,7 @@ class ReturnInventoryController extends Controller
             ]
         );
         $return = new ReturnInventory;
-        $return->remarks = $request->remarks;
+        $return->remarks = $request->remarks ?? null;
         $return->personnel_id = $request->personnel_id;
         $return->incoming_id = $request->incoming_id;
         $return->status = $request->status;
